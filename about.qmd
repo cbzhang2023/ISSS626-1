@@ -4,12 +4,12 @@ title: "Hello There"
 
 <h1 align="center">
 
-I know what you are looking for.
+NO! **There are no Easter Eggs up here**
 
 </h1>
 
 <h1 align="center">
 
-NO! **There are no Easter Eggs up here**
+So Let's Get some Beer Together!
 
 </h1>

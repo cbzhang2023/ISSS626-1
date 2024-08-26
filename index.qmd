@@ -1,9 +1,19 @@
 ---
 title: "ISSS626"
 author: "Zhang Chenbin"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+format: 
+  html:
+    code-fold: true
 ---
 
 # Welcome to my Page
+
+![](images/e815d1c8e57fe4f830a644972228f2a.png)
 
 <h1 align="center">
 

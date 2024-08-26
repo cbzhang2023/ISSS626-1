@@ -1,9 +1,15 @@
 ---
-title: "About"
+title: "Hello There"
 ---
 
-About this site
+<h1 align="center">
 
-```{r}
-1 + 1
-```
+I know what you are looking for.
+
+</h1>
+
+<h1 align="center">
+
+NO! **There are no Easter Eggs up here**
+
+</h1>

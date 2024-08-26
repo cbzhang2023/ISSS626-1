@@ -11,7 +11,11 @@ format:
     code-fold: true
 ---
 
+<h1 align="center">
+
 # Welcome to my Page
+
+</h1>
 
 ![](images/e815d1c8e57fe4f830a644972228f2a.png)
 

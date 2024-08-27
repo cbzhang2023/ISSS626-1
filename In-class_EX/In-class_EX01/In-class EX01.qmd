@@ -13,15 +13,13 @@ format:
     code-fold: true
 ---
 
-
 ::: {style="font-size: 1.50em"}
-
 ```{r}
 pacman::p_load(tidyverse, sf, tmap, ggstatsplot)
 ```
 :::
-:::
 
+:::
 
 ```{r}
 library(tidyverse)
@@ -30,14 +28,13 @@ library(tmap)
 library(ggstatsplot)
 ```
 
-
-
 ```{r}
 mpsz14_shp = st_read(dsn = "data/geospatial", 
                       layer = "MP14_SUBZONE_WEB_PL")
 ```
 
 The code for read kml:
+
 ```{r}
 #| eval: false
 mpsz14_kml <- st_read("data/geospatial/MasterPlan2014SubzoneBoundaryWebKML.kml")
@@ -48,10 +45,10 @@ st_write(mpsz14_shp,
          "data/geospatial/MP14_SUBZONE_WEB_PL.kml",
          delete_dsn = TRUE)
 ```
+
 ```{r}
 mpsz14_kml <- st_read("data/geospatial/MP14_SUBZONE_WEB_PL.kml")
 ```
-
 
 ```{r}
 mpsz19_kml <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
@@ -62,9 +59,11 @@ mpsz19_shp <- st_read(dsn = "data/",
                       layer = "MPSZ-2019") %>%
 st_transform(crs = 3414)
 ```
+
 ```{r}
 popdata2023 <- read_csv("data/respopagesextod2023.csv")
 ```
+
 ```{r}
 popdata2023 <- popdata2023 %>%
   group_by(PA, SZ, AG) %>%
@@ -84,6 +83,7 @@ mutate(`ECONOMY ACTIVE` = rowSums(.[7:13]) # Aged 25 - 59
          `ECONOMY ACTIVE`, `AGED`,
          `TOTAL`, `DEPENDENCY`)
 ```
+
 ```{r}
 popdata2023 <- popdata2023 %>%
   mutate_at(.vars = vars(PA, SZ),
@@ -106,13 +106,3 @@ tm_shape(mpsz_pop2023) +
 qtm(mpsz_pop2023, 
     fill = "DEPENDENCY")
 ```
-
-
-
-
-
-
-
-
-
-

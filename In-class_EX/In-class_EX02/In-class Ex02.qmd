@@ -82,10 +82,6 @@ spplot(gridded_kde_childcareSG_ad)
 
 Files:
 
-![](images/1061f4976a81ec8df75a411b2d64855.jpg)
-
-![](images/4fcdd0dc2beadf32d10f1e61a7a25ea.png)
-
 Read csv:
 
 ```{r}
@@ -96,4 +92,3 @@ rdacc_sf <- read_csv("data/thai_road_accident_2019_2022.csv") %>%
   st_transform(crs = 32647)
 
 ```
-

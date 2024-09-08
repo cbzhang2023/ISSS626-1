@@ -9,6 +9,43 @@ execute:
 format: 
   html:
     code-fold: true
+listing:
+  - id: Hands-on_Exercise
+    contents: 
+      - "Hands-on_EX/*/*.qmd"
+    sort:
+      - "title"
+    type: grid
+    fields: 
+      - image
+      - date
+      - title
+      - author
+    
+  - id: In-class_Exercise
+    contents: 
+      - "In-class_EX/*/*.qmd"
+    sort:
+      - "title"
+    type: grid
+    fields: 
+      - image
+      - date
+      - title
+      - author
+
+  - id: Take-home_Exercise
+    contents: 
+      - "Take-home_Ex/*/*.qmd"
+    sort:
+      - "title"
+    type: grid
+    fields: 
+      - image
+      - date
+      - title
+      - author
+toc: false
 ---
 
 <h1 align="center">

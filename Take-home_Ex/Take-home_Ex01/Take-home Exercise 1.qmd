@@ -1,0 +1,12 @@
+---
+title: "Take-home Exercise 1"
+author: "Zhang Chenbin"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+format: 
+  html:
+    code-fold: true
+---

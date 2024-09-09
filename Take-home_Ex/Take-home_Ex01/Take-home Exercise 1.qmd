@@ -10,3 +10,30 @@ format:
   html:
     code-fold: true
 ---
+
+```{r}
+pacman::p_load(sf, spNetwork, tmap, tidyverse)
+```
+
+```{r}
+car_acc <- read.csv("data/thai_road_accident_2019_2022.csv")
+```
+
+```{r}
+# Filter out rows where either longitude or latitude is missing
+car_acc_clean <- car_acc %>%
+  filter(!is.na(longitude) & !is.na(latitude))
+
+```
+
+```{r}
+car_acc_sf <- car_acc_clean %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
+
+```
+
+```{r}
+#| eval: false
+st_write(car_acc_sf, "data/thai_road_accidents.shp")
+
+```

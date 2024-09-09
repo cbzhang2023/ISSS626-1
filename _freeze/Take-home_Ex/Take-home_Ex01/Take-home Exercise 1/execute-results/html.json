@@ -1,0 +1,15 @@
+{
+  "hash": "83f1075b1d2b939a2245d91a6adc4202",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Take-home Exercise 1\"\nauthor: \"Zhang Chenbin\"\nexecute: \n  eval: true\n  echo: true\n  warning: false\n  freeze: true\nformat: \n  html:\n    code-fold: true\n---\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(sf, spNetwork, tmap, tidyverse)\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ncar_acc <- read.csv(\"data/thai_road_accident_2019_2022.csv\")\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n# Filter out rows where either longitude or latitude is missing\ncar_acc_clean <- car_acc %>%\n  filter(!is.na(longitude) & !is.na(latitude))\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ncar_acc_sf <- car_acc_clean %>%\n  st_as_sf(coords = c(\"longitude\", \"latitude\"), crs = 4326)\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nst_write(car_acc_sf, \"data/thai_road_accidents.shp\")\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

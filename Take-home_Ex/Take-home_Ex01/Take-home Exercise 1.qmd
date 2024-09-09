@@ -1,10 +1,12 @@
 ---
 title: "Take-home Exercise 1"
 author: "Zhang Chenbin"
+date: "`r s.Date()"
+date-modified: "last-modified"
 execute: 
   eval: true
   echo: true
-  warning: false
+  message: false
   freeze: true
 format: 
   html:
@@ -16,24 +18,28 @@ pacman::p_load(sf, spNetwork, tmap, tidyverse)
 ```
 
 ```{r}
-car_acc <- read.csv("data/thai_road_accident_2019_2022.csv")
-```
-
-```{r}
-# Filter out rows where either longitude or latitude is missing
-car_acc_clean <- car_acc %>%
-  filter(!is.na(longitude) & !is.na(latitude))
-
-```
-
-```{r}
-car_acc_sf <- car_acc_clean %>%
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
-
+car_acc <- read.csv('data/thai_road_accident_2019_2022.csv') %>%
+  # Remove rows with missing longitude or latitude
+  filter(!is.na(longitude) & !is.na(latitude)) %>%
+  
+  # Create new columns for month and day of the week
+  mutate(Month_num = month(incident_datetime)) %>%
+  mutate(Month_fac = month(incident_datetime, label = TRUE, abbr = TRUE)) %>%
+  mutate(dayofweek = day(incident_datetime)) %>%
+  
+  # Convert the data frame to a spatial sf object
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  
+  # Transform to a different CRS (Coordinate Reference System)
+  st_transform(crs = 32647)
 ```
 
 ```{r}
 #| eval: false
-st_write(car_acc_sf, "data/thai_road_accidents.shp")
+write_rds(car_acc,"data/acc.rds")
 
+```
+
+```{r}
+acc <- read_rds("data/acc.rds")
 ```

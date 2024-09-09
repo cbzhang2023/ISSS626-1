@@ -1,0 +1,115 @@
+---
+title: "In-class EX01"
+author: "Zhang Chenbin"
+date: "`r Sys.Date()"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: true
+---
+
+
+::: {style="font-size: 1.50em"}
+
+```{r}
+pacman::p_load(tidyverse, sf, tmap, ggstatsplot)
+```
+
+:::
+
+:::
+
+
+```{r}
+library(tidyverse)
+library(sf)
+library(tmap)
+library(ggstatsplot)
+```
+
+```{r}
+mpsz14_shp = st_read(dsn = "data/geospatial", 
+                      layer = "MP14_SUBZONE_WEB_PL")
+```
+
+
+The code for read kml:
+
+
+```{r}
+#| eval: false
+mpsz14_kml <- st_read("data/geospatial/MasterPlan2014SubzoneBoundaryWebKML.kml")
+```
+
+```{r}
+st_write(mpsz14_shp,
+         "data/geospatial/MP14_SUBZONE_WEB_PL.kml",
+         delete_dsn = TRUE)
+```
+
+```{r}
+mpsz14_kml <- st_read("data/geospatial/MP14_SUBZONE_WEB_PL.kml")
+```
+
+```{r}
+mpsz19_kml <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
+```
+
+```{r}
+mpsz19_shp <- st_read(dsn = "data/",
+                      layer = "MPSZ-2019") %>%
+st_transform(crs = 3414)
+```
+
+```{r}
+popdata2023 <- read_csv("data/respopagesextod2023.csv")
+```
+
+```{r}
+popdata2023 <- popdata2023 %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup()%>%
+  pivot_wider(names_from=AG, 
+              values_from=POP) %>%
+  mutate(YOUNG = rowSums(.[3:6])
+         +rowSums(.[14])) %>%
+mutate(`ECONOMY ACTIVE` = rowSums(.[7:13]) # Aged 25 - 59
+         + rowSums(.[15])) %>% # Aged 60 - 64
+  mutate(`AGED` = rowSums(.[16:21])) %>%
+  mutate(`TOTAL` = rowSums(.[3:21])) %>%
+  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`) 
+          / `ECONOMY ACTIVE`) %>%
+  select(`PA`, `SZ`, `YOUNG`,
+         `ECONOMY ACTIVE`, `AGED`,
+         `TOTAL`, `DEPENDENCY`)
+```
+
+```{r}
+popdata2023 <- popdata2023 %>%
+  mutate_at(.vars = vars(PA, SZ),
+            .funs = list(toupper)) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+```
+
+```{r}
+mpsz_pop2023 <- left_join(mpsz19_shp, popdata2023,
+                          by = c("SUBZONE_N" = "SZ"))
+```
+
+```{r}
+write_rds(mpsz_pop2023, "data/mpszpop2023.rds")
+```
+
+```{r}
+tm_shape(mpsz_pop2023) +
+  tm_polygons()
+qtm(mpsz_pop2023, 
+    fill = "DEPENDENCY")
+```
+

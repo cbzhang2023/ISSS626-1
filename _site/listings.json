@@ -1,17 +1,3 @@
-[
-  {
-    "listing": "/index.html",
-    "items": [
-      "/Hands-on_EX/Hand-on_EX01/Hand-on_EX01_b.html",
-      "/Hands-on_EX/Hand-on_EX01/Hand-on_EX01_a.html",
-      "/Hands-on_EX/Hand-on-EX02/Hands-on_EX02.html",
-      "/Hands-on_EX/Hand-on-EX02/Hands-on_EX02_b.html",
-      "/Hands-on_EX/Hand-on-EX03/Hands-on_EX03.html",
-      "/Hands-on_EX/Hand-on-EX04/Hands-on_Ex04.html",
-      "/In-class_EX/In-class_EX01/In-class_EX01.html",
-      "/In-class_EX/In-class_EX02/In-class_Ex02.html",
-      "/In-class_EX/In-class_EX03/In-class_Ex03.html",
-      "/Take-home_Ex/Take-home_Ex01/Take-home_Exercise 1.html"
-    ]
-  }
-]
+version https://git-lfs.github.com/spec/v1
+oid sha256:d886c8e50d4237dd0b2c31ddb0eccbbe34b728d7f204ae54445c82aeabde9c95
+size 618

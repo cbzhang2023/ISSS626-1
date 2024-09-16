@@ -4,4 +4,5 @@
 .Ruserdata
 
 /.quarto/
-data/_freeze/Take-home_Ex/Take-home_Exercise_1/execute-results/html.json
+data/
+_freeze/Take-home_Ex/Take-home_Exercise_1/execute-results/html.json

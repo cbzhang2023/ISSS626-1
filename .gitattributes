@@ -1,1 +1,2 @@
 *.json filter=lfs diff=lfs merge=lfs -text
+_freeze/Take-home_Ex/Take-home_Exercise_1/execute-results/html.json filter=lfs diff=lfs merge=lfs -text

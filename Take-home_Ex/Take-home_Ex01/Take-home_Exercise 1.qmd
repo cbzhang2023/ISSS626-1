@@ -1,4 +1,4 @@
---- 
+---
 title: "Take-home EX01"
 author: "Zhang Chenbin"
 execute: 
@@ -13,10 +13,11 @@ runtime: shiny
 ---
 
 ```{r}
-pacman::p_load(sf, spNetwork, tmap, tidyverse, spatstat, lubridate, shiny, leaflet, leaflet.extras2)
+pacman::p_load(sf, spNetwork, tmap, tidyverse, spatstat, lubridate, shiny, leaflet, leaflet.extras2, dplyr)
 ```
 
 ```{r}
+#| eval: false
 car_acc <- read.csv('data/thai_road_accident_2019_2022.csv') %>%
   # Remove rows with missing longitude or latitude
   filter(!is.na(longitude) & !is.na(latitude)) %>%
@@ -40,30 +41,36 @@ write_rds(car_acc,"data/acc.rds")
 ```
 
 ```{r}
+#| eval: false
 acc <- read_rds("data/acc.rds")
 ```
 
 ```{r}
+#| eval: false
 roads <- st_read(dsn="data", 
                    layer="hotosm_tha_roads_lines_shp")
 ```
 
 ```{r}
+#| eval: false
 adm1 <- st_read(dsn="data", 
                    layer="tha_admbnda_adm1_rtsd_20220121")
 ```
 
 ```{r}
+#| eval: false
 adm2 <- st_read(dsn="data", 
                    layer="tha_admbnda_adm2_rtsd_20220121")
 ```
 
 ```{r}
+#| eval: false
 adm3 <- st_read(dsn="data", 
                    layer="tha_admbnda_adm3_rtsd_20220121")
 ```
 
 ```{r}
+#| eval: false
 # 筛选曼谷省的边界（adm1 - 省级边界）
 bangkok_province <- adm1 %>%
   filter(ADM1_EN == "Bangkok")  # 假设 ADM1_EN 是省名字段
@@ -81,9 +88,7 @@ bangkok_district <- adm3 %>%
 ```
 
 ```{r}
-# 检查 car_acc 和 bangkok_province 的 CRS
-st_crs(car_acc)  # 检查交通事故数据的 CRS
-st_crs(bangkok_province)  # 检查曼谷省边界的 CRS
+#| eval: false
 
 # 如果两个 CRS 不同，将其中一个转换为与另一个相同的 CRS
 # 例如，如果需要将 bangkok_province 转换为与 car_acc 相同的 CRS
@@ -96,6 +101,7 @@ car_acc_bangkok <- st_intersection(car_acc, bangkok_province)
 ```
 
 ```{r}
+#| eval: false
 # 确保所有筛选后的数据（bangkok_province, bangkok_city, bangkok_district）的 CRS 与 car_acc_bangkok 一致
 bangkok_province <- st_transform(bangkok_province, crs = st_crs(car_acc_bangkok))
 bangkok_city <- st_transform(bangkok_city, crs = st_crs(car_acc_bangkok))
@@ -112,31 +118,68 @@ car_acc_bangkok_full <- st_join(car_acc_bangkok_adm1_adm2, bangkok_district)
 ```
 
 ```{r}
-tmap_mode("view")
+#| eval: false
+# 保存为 .rds 文件
+saveRDS(bangkok_province, "data/bangkok_province.rds")
+saveRDS(bangkok_city, "data/bangkok_city.rds")
+saveRDS(bangkok_district, "data/bangkok_district.rds")
 
-# 绘制曼谷交通事故点图
-tm_shape(bangkok_district) +  # 显示曼谷的区级边界
-  tm_borders(col = "gray", lwd = 2) +  # 设置边界颜色和宽度
-  tm_shape(car_acc_bangkok_full) +  # 交通事故数据
-  tm_dots(alpha = 0.6, size = 0.05, col = "black") +  # 设置点的透明度、大小和颜色
-  tm_layout(title = "曼谷交通事故分布", title.size = 1.5, legend.outside = TRUE)
 ```
 
 ```{r}
-# 为 roads 数据手动设置 CRS 为 EPSG:32647 (WGS 84 / UTM zone 47N)
-st_crs(roads) <- 32647  # 设置坐标参考系统
-
-# 检查设置后的 CRS
-st_crs(roads)
-
-# 确保 car_acc_bangkok_full 和 roads 的 CRS 一致
-roads <- st_transform(roads, crs = st_crs(car_acc_bangkok_full))
-
-# 进行空间连接，基于位置将事故数据与道路数据连接
-acc_roads_joined <- st_join(car_acc_bangkok_full, roads)
+bangkok_province <- st_read("data/bangkok_province.gpkg")
+bangkok_city <- st_read("data/bangkok_city.gpkg")
+bangkok_district <- st_read("data/bangkok_district.gpkg")
 ```
 
-111
+
+
+
+```{r}
+#| eval: false
+library(dplyr)
+library(sf)
+
+# 转换 sf 对象为 data.frame 进行字段连接
+car_acc_bangkok_full_df <- as.data.frame(car_acc_bangkok_full)
+roads_df <- as.data.frame(roads)
+
+# 使用 dplyr 的 left_join 根据 route 和 name_th 进行连接
+acc_roads_joined_df <- car_acc_bangkok_full_df %>%
+    left_join(roads_df, by = c("route" = "name_th"))
+
+# 保留 geometry.x 列，删除 geometry.y 列
+acc_roads_joined_df$geometry <- acc_roads_joined_df$geometry.x
+
+# 删除不需要的列，包括 geometry.y
+acc_roads_joined_df_cleaned <- acc_roads_joined_df %>%
+    select(-geometry.x, -geometry.y, -ADM2_EN.x, -ADM2_TH.x, -ADM2_PCODE.x, -ADM2_REF, 
+           -ADM2ALT1EN, -ADM2ALT2EN, -ADM2ALT1TH, -ADM2ALT2TH, -ADM1_EN.x.1, -ADM1_TH.x.1, 
+           -ADM1_PCODE.x.1, -ADM0_EN.x.1, -ADM0_TH.x.1, -ADM0_PCODE.x.1, -ADM2_EN.y, 
+           -ADM2_TH.y, -ADM2_PCODE.y, -ADM1_EN.y.1, -ADM1_TH.y.1, -ADM1_PCODE.y.1, 
+           -ADM0_EN.y.1, -ADM0_TH.y.1, -ADM0_PCODE.y.1, -date.x.1, -validOn.x.1, 
+           -date.y.1, -validOn.y.1, -validTo.y.1)
+
+# 将清理后的数据转换回 sf 对象
+acc_roads_joined <- st_as_sf(acc_roads_joined_df_cleaned, sf_column_name = "geometry")
+
+```
+
+```{r}
+#| eval: false
+# 写入本地文件，例如写成 GeoPackage 格式
+# 保存为 .rds 格式
+saveRDS(acc_roads_joined, "data/acc_roads_joined_1.rds")
+
+
+```
+
+```{r}
+# 重新从本地读取
+# 使用 GeoPackage 格式保存
+# 读取 .rds 文件
+acc_roads_joined <- readRDS("data/acc_roads_joined_1.rds")
+```
 
 111
 
@@ -232,47 +275,6 @@ leaflet_map
 ```
 
 ```{r}
-library(shiny)
-library(tmap)
-library(dplyr)
 
-# 假设你的数据是 acc_roads_joined
-acc_roads_joined <- acc_roads_joined %>%
-  mutate(year = year(incident_datetime))  # 从 incident_datetime 提取年份
-
-# 创建Shiny UI
-ui <- fluidPage(
-  titlePanel("Bangkok Traffic Accidents"),
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("selected_cause", "Select Cause:", choices = unique(acc_roads_joined$presumed_cause), selected = "speeding"),
-      selectInput("selected_year", "Select Year:", choices = c("2019", "2020", "2021", "2022"), selected = "2019")
-    ),
-    mainPanel(
-      tmapOutput("accident_map")  # 显示 tmap 地图
-    )
-  )
-)
-
-# Shiny服务器逻辑
-server <- function(input, output, session) {
-  # 基于用户选择的原因和年份进行数据过滤
-  filtered_data <- reactive({
-    acc_roads_joined %>%
-      filter(year == as.numeric(input$selected_year) & presumed_cause == input$selected_cause)
-  })
-  
-  # 生成地图
-  output$accident_map <- renderTmap({
-    tm_shape(bangkok_district) +
-      tm_borders(col = "gray", lwd = 2) +
-      tm_shape(filtered_data()) +
-      tm_dots(size = 0.1, alpha = 0.7, col = "black", popup.vars = c("Year" = "year", "Cause" = "presumed_cause")) +
-      tm_layout(title = paste("Bangkok Traffic Accidents", input$selected_year))
-  })
-}
-
-# 运行Shiny应用程序
-shinyApp(ui, server)
 
 ```

@@ -120,6 +120,7 @@ global_moran_perm(condo_resale_sf$MLR_RES,
                   alternative = "two.sided",
                   nsim = 99)
 ```
+
 ```{r}
 bw.fixed <- bw.gwr(formula = SELLING_PRICE ~ AREA_SQM + AGE + PROX_CBD + 
                      PROX_CHILDCARE + PROX_ELDERLYCARE  + PROX_URA_GROWTH_AREA + 
